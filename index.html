@@ -1,12 +1,16 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" data-theme="dark">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#2AABEE" />
+<meta name="description" content="Create and preview beautiful Telegram posts in your browser. پست‌ساز حرفه‌ای تلگرام" />
+<link rel="manifest" href="manifest.json" />
 <title>پست‌ساز تلگرام — Telegram Post Studio</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/vazirmatn@latest/index.css" />
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
-  :root{
+  :root[data-theme="dark"]{
     --bg:#05070d;
     --panel:rgba(255,255,255,.045);
     --panel2:rgba(255,255,255,.02);
@@ -17,6 +21,23 @@
     --accent2:#a78bfa;
     --tg:#17212b;
     --tg2:#0e1621;
+    --tg-text:#dfe6ee;
+    --tg-muted:#7d8b99;
+    --radius:16px;
+  }
+  :root[data-theme="light"]{
+    --bg:#f4f6fa;
+    --panel:rgba(255,255,255,.7);
+    --panel2:rgba(0,0,0,.02);
+    --border:rgba(0,0,0,.12);
+    --text:#1a1d23;
+    --muted:#6b7280;
+    --accent:#2AABEE;
+    --accent2:#7c3aed;
+    --tg:#ffffff;
+    --tg2:#eef2f7;
+    --tg-text:#1a1d23;
+    --tg-muted:#6b7280;
     --radius:16px;
   }
   *{margin:0;padding:0;box-sizing:border-box}
@@ -25,13 +46,15 @@
     font-family:'Vazirmatn',system-ui,-apple-system,sans-serif;
     background:var(--bg);color:var(--text);
     min-height:100vh;overflow-x:hidden;line-height:1.85;
+    transition:background .35s,color .35s;
   }
   ::selection{background:color-mix(in srgb,var(--accent) 45%,transparent)}
   ::-webkit-scrollbar{width:10px;height:10px}
   ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px;border:2px solid var(--bg)}
+  [data-theme="light"] ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.2);border-color:var(--bg)}
   ::-webkit-scrollbar-track{background:transparent}
-
-  .blob{position:fixed;border-radius:50%;filter:blur(130px);z-index:-2;opacity:.26;animation:drift 20s ease-in-out infinite alternate}
+  .blob{position:fixed;border-radius:50%;filter:blur(130px);z-index:-2;opacity:.26;animation:drift 20s ease-in-out infinite alternate;transition:opacity .35s}
+  [data-theme="light"] .blob{opacity:.12}
   .b1{width:520px;height:520px;background:var(--accent);top:-160px;right:-140px}
   .b2{width:460px;height:460px;background:var(--accent2);bottom:-180px;left:-120px;animation-delay:-10s}
   @keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(-70px,45px) scale(1.15)}}
@@ -41,19 +64,22 @@
     background-size:44px 44px;
     -webkit-mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 30%,transparent 75%);
     mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 30%,transparent 75%);
+    transition:background-image .35s;
   }
+  [data-theme="light"] body::before{background-image:linear-gradient(rgba(0,0,0,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.05) 1px,transparent 1px)}
 
-  .nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:rgba(5,7,13,.72);border-bottom:1px solid var(--border)}
+  .nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:rgba(5,7,13,.72);border-bottom:1px solid var(--border);transition:background .35s}
+  [data-theme="light"] .nav{background:rgba(244,246,250,.8)}
   .nav-inner{max-width:1280px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px;cursor:pointer;user-select:none}
   .logo-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));font-size:17px;box-shadow:0 6px 18px color-mix(in srgb,var(--accent) 40%,transparent)}
   .logo .thin{color:var(--muted);font-weight:500}
   .nav-right{display:flex;gap:8px;flex-wrap:wrap}
-  .pill{font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;background:color-mix(in srgb,var(--accent) 15%,transparent);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent)}
-  .pill.ghost{background:rgba(255,255,255,.04);border-color:var(--border);color:var(--muted)}
+  .nav-icon{font:inherit;font-size:13px;font-weight:700;background:color-mix(in srgb,var(--accent) 15%,transparent);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent);color:var(--text);border-radius:999px;padding:6px 12px;cursor:pointer;transition:all .18s}
+  .nav-icon:hover{background:color-mix(in srgb,var(--accent) 28%,transparent);transform:translateY(-1px)}
+  .version-badge{font-size:11px;padding:4px 10px;border-radius:999px;background:color-mix(in srgb,var(--accent) 12%,transparent);border:1px solid color-mix(in srgb,var(--accent) 25%,transparent);color:var(--muted)}
 
   .wrap{max-width:1280px;margin:0 auto;padding:0 24px 60px}
-
   .hero{padding:46px 0 28px;text-align:center;animation:fadeUp .7s ease both}
   .hero h1{font-size:clamp(27px,4.2vw,46px);line-height:1.3;font-weight:800}
   .grad{background:linear-gradient(92deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
@@ -63,40 +89,39 @@
   @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
 
   .workspace{display:grid;grid-template-columns:1fr 420px;gap:22px;align-items:start}
-  .panel{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  .panel{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 20px 60px rgba(0,0,0,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
   .controls{padding:22px;animation:fadeUp .7s .1s ease both}
   .preview-panel{position:sticky;top:78px;overflow:hidden;display:flex;flex-direction:column;animation:fadeUp .7s .2s ease both}
-
   .sec{padding:16px 0;border-bottom:1px dashed var(--border)}
   .sec:first-child{padding-top:2px}
   .sec-title{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;letter-spacing:.04em;color:var(--muted);margin-bottom:14px}
   .sec-title .hint{margin-right:auto;font-weight:500;opacity:.65;font-size:11px}
-
-  /* templates */
   .tpl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
   .tpl{font:inherit;font-size:12px;font-weight:600;color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:10px 6px;cursor:pointer;transition:all .18s;display:flex;flex-direction:column;align-items:center;gap:4px}
   .tpl .em{font-size:19px}
+  [data-theme="light"] .tpl{background:rgba(0,0,0,.02)}
   .tpl:hover{border-color:color-mix(in srgb,var(--accent) 55%,transparent);color:var(--text);transform:translateY(-2px);box-shadow:0 8px 20px color-mix(in srgb,var(--accent) 15%,transparent)}
 
-  /* editor */
   .fmt-bar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
   .fmt{font:inherit;font-size:12px;font-weight:700;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:9px;padding:6px 11px;cursor:pointer;transition:all .15s}
+  [data-theme="light"] .fmt{background:rgba(0,0,0,.03)}
   .fmt:hover{color:var(--text);border-color:rgba(255,255,255,.25);transform:translateY(-1px)}
   .fmt.b{font-weight:900}
   .fmt.i{font-style:italic}
   .fmt.c{font-family:monospace}
-
   .seg{display:inline-flex;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px}
+  [data-theme="light"] .seg{background:rgba(0,0,0,.04)}
   .seg button{font:inherit;font-size:11.5px;font-weight:600;color:var(--muted);background:none;border:none;border-radius:8px;padding:5px 11px;cursor:pointer;transition:all .18s}
   .seg button.active{background:color-mix(in srgb,var(--accent) 22%,transparent);color:#fff}
-
   textarea#postText{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:12px;color:var(--text);padding:14px;font:inherit;font-size:14px;line-height:2;resize:vertical;min-height:270px;transition:border-color .2s,box-shadow .2s}
+  [data-theme="light"] textarea#postText{background:rgba(255,255,255,.6)}
   textarea#postText:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
 
   .counter{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px}
   .counter .num{font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums;white-space:nowrap}
   .counter .num small{color:var(--muted);font-weight:500}
   .bar{flex:1;height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+  [data-theme="light"] .bar{background:rgba(0,0,0,.08)}
   .bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .25s,background .25s}
   .bar.over i{background:linear-gradient(90deg,#ef4444,#f59e0b)}
   .num.over{color:#ef4444}
@@ -104,34 +129,40 @@
 
   .chips{display:flex;flex-wrap:wrap;gap:8px}
   .chip{font:inherit;font-size:12.5px;font-weight:600;color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:999px;padding:6px 13px;cursor:pointer;transition:all .18s}
+  [data-theme="light"] .chip{background:rgba(0,0,0,.02)}
   .chip:hover{border-color:color-mix(in srgb,var(--accent) 50%,transparent);color:var(--text);transform:translateY(-1px)}
   .chip.on{color:#fff;border-color:color-mix(in srgb,var(--accent) 60%,transparent);background:color-mix(in srgb,var(--accent) 18%,transparent)}
 
   .emoji-row{display:flex;flex-wrap:wrap;gap:4px}
   .emo{font:inherit;font-size:17px;background:none;border:1px solid transparent;border-radius:9px;padding:5px 7px;cursor:pointer;transition:all .15s;line-height:1}
   .emo:hover{background:rgba(255,255,255,.08);transform:scale(1.2)}
-
   .tag-add{display:flex;gap:8px;margin-top:10px}
   .tag-add input{flex:1;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:8px 12px;font:inherit;font-size:13px}
+  [data-theme="light"] .tag-add input{background:rgba(255,255,255,.6)}
   .tag-add input:focus{outline:none;border-color:var(--accent)}
 
-  /* media */
+  /* multi-image */
+  .media-grid{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+  .media-thumb{position:relative;width:80px;height:80px;border-radius:10px;overflow:hidden;border:1px solid var(--border);flex:none}
+  .media-thumb img{width:100%;height:100%;object-fit:cover}
+  .media-thumb .del{position:absolute;top:-2px;right:-2px;width:22px;height:22px;border-radius:50%;background:#ef4444;color:#fff;border:none;font-size:13px;cursor:pointer;display:grid;place-items:center;box-shadow:0 2px 8px rgba(0,0,0,.4)}
   .media-box{border:1.5px dashed var(--border);border-radius:12px;padding:16px;text-align:center;transition:all .2s;cursor:pointer}
   .media-box:hover{border-color:color-mix(in srgb,var(--accent) 55%,transparent);background:color-mix(in srgb,var(--accent) 5%,transparent)}
   .media-box .big{font-size:26px}
   .media-box p{font-size:12.5px;color:var(--muted);margin-top:6px}
-  .media-thumb{display:flex;align-items:center;gap:12px}
-  .media-thumb img{width:72px;height:72px;object-fit:cover;border-radius:12px;border:1px solid var(--border)}
-  .media-thumb .info{flex:1;font-size:12.5px;color:var(--muted)}
-  .media-thumb .info b{display:block;color:var(--text);font-size:13px;margin-bottom:2px}
 
-  /* settings */
+  /* image carousel in preview */
+  .img-carousel{display:flex;gap:4px;overflow-x:auto;padding:8px 14px 0;background:#000}
+  .img-carousel img{height:160px;border-radius:6px;object-fit:cover;flex:none}
+
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:600}
-  .field input[type=text],.field input[type=number]{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:9px 12px;font:inherit;font-size:13px;transition:border-color .2s,box-shadow .2s}
+  .field input[type=text],.field input[type=number],.field input[type=time]{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:10px;color:var(--text);padding:9px 12px;font:inherit;font-size:13px;transition:border-color .2s,box-shadow .2s}
+  [data-theme="light"] .field input{background:rgba(255,255,255,.6)}
   .field input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 20%,transparent)}
 
   .btn{font:inherit;font-size:13px;font-weight:700;border-radius:11px;padding:10px 16px;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+  [data-theme="light"] .btn{background:rgba(0,0,0,.04)}
   .btn:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.22)}
   .btn:active{transform:translateY(0) scale(.98)}
   .btn.primary{border:none;color:#fff;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 8px 22px color-mix(in srgb,var(--accent) 35%,transparent);position:relative;overflow:hidden}
@@ -139,7 +170,7 @@
   .btn.primary:hover::after{right:130%}
   .btn.danger:hover{border-color:color-mix(in srgb,#ef4444 55%,transparent);color:#fca5a5}
   .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
-  .btn-row .primary{grid-column:1/-1}
+  .btn-row .full{grid-column:1/-1}
 
   /* telegram preview */
   .tg-head{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.25)}
@@ -147,45 +178,45 @@
   .tg-head .live{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#3fb950}
   .tg-head .live i{width:7px;height:7px;border-radius:50%;background:#3fb950;animation:pulse 1.6s infinite}
   @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(63,185,80,.5)}50%{box-shadow:0 0 0 6px rgba(63,185,80,0)}}
-
   .tg-scroll{overflow:auto;max-height:calc(100vh - 150px);padding:18px 14px;background:
     radial-gradient(circle at 20% 10%,rgba(42,171,238,.06),transparent 40%),
     radial-gradient(circle at 80% 90%,rgba(167,139,250,.06),transparent 40%),
-    var(--tg2)}
-  .tg-bubble{background:var(--tg);border-radius:14px 14px 4px 14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.4);max-width:380px;margin:0 auto}
+    var(--tg2);
+    transition:background .35s}
+  #telegramPreview{max-width:380px;margin:0 auto}
+  .tg-bubble{background:var(--tg);border-radius:14px 14px 4px 14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.4);transition:background .35s}
   .tg-chan{display:flex;align-items:center;gap:10px;padding:10px 12px}
   .tg-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;font-size:18px;flex:none;box-shadow:0 4px 12px color-mix(in srgb,var(--accent) 40%,transparent);overflow:hidden}
-  .tg-name{font-size:13.5px;font-weight:700;color:#fff}
-  .tg-sub{font-size:11px;color:#7d8b99}
-  .tg-img{width:100%;display:block;max-height:340px;object-fit:cover;background:#000}
-  .tg-cap{padding:12px 14px 6px;font-size:13.5px;line-height:1.95;color:#dfe6ee;white-space:pre-wrap;word-break:break-word}
+  .tg-name{font-size:13.5px;font-weight:700;color:var(--text);transition:color .35s}
+  .tg-sub{font-size:11px;color:var(--tg-muted)}
+  .tg-cap{padding:12px 14px 10px;font-size:13.5px;line-height:1.95;color:var(--tg-text);white-space:pre-wrap;word-break:break-word;transition:color .35s}
   .tg-cap a{color:var(--accent);text-decoration:none}
   .tg-cap a:hover{text-decoration:underline}
-  .tg-cap code{font-family:monospace;font-size:.85em;background:rgba(255,255,255,.1);padding:1px 6px;border-radius:5px}
+  .tg-cap code{font-family:monospace;font-size:.85em;background:rgba(0,0,0,.15);padding:1px 6px;border-radius:5px}
   .tg-cap .spoil{background:rgba(255,255,255,.28);color:transparent;border-radius:4px;cursor:pointer;transition:all .25s;user-select:none}
   .tg-cap .spoil.revealed{background:transparent;color:inherit}
-  .tg-foot{display:flex;align-items:center;justify-content:space-between;padding:4px 14px 10px;font-size:11px;color:#7d8b99}
+  .tg-foot{display:flex;align-items:center;justify-content:space-between;padding:4px 14px 10px;font-size:11px;color:var(--tg-muted)}
   .tg-views{display:flex;align-items:center;gap:5px}
   .tg-react{display:flex;gap:6px;padding:0 14px 12px;flex-wrap:wrap}
   .tg-r{font-size:12px;background:rgba(42,171,238,.12);border:1px solid rgba(42,171,238,.25);color:#9fd3f0;border-radius:999px;padding:3px 9px;display:flex;align-items:center;gap:4px}
+  [data-theme="light"] .tg-r{background:rgba(42,171,238,.1);color:#1a5a8c}
 
   .tips{margin-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
   .tip-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;animation:fadeUp .7s .3s ease both}
   .tip-card .ic{font-size:22px;margin-bottom:8px}
   .tip-card h4{font-size:14px;font-weight:700;margin-bottom:6px}
   .tip-card p{font-size:12.5px;color:var(--muted);line-height:1.8}
-
   .foot{text-align:center;color:var(--muted);font-size:13px;padding:30px 0 8px}
   .foot b{color:var(--text)}
 
   #toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,90px);background:#10151d;border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);color:var(--text);padding:13px 22px;border-radius:14px;font-size:14px;font-weight:600;opacity:0;transition:all .4s cubic-bezier(.2,.9,.3,1.15);z-index:99;box-shadow:0 16px 50px rgba(0,0,0,.55);pointer-events:none;max-width:90vw;text-align:center}
+  [data-theme="light"] #toast{background:#eef2f7;border-color:color-mix(in srgb,var(--accent) 40%,transparent);color:var(--text)}
   #toast.show{transform:translate(-50%,0);opacity:1}
 
   @media(max-width:1024px){
     .workspace{grid-template-columns:1fr}
     .preview-panel{position:static;order:-1}
     .tg-scroll{max-height:none}
-    .tpl-grid{grid-template-columns:repeat(4,1fr)}
   }
   @media(max-width:560px){
     .tpl-grid{grid-template-columns:repeat(2,1fr)}
@@ -194,183 +225,242 @@
 </style>
 </head>
 <body>
-
-<div class="blob b1"></div>
-<div class="blob b2"></div>
+<div class="blob b1"></div><div class="blob b2"></div>
 
 <header class="nav">
   <div class="nav-inner">
-    <div class="logo">
-      <span class="logo-mark">✈️</span>
-      <span>پست‌ساز <span class="thin">تلگرام</span></span>
-    </div>
+    <div class="logo"><span class="logo-mark">✈️</span><span data-i18n="appName">پست‌ساز <span class="thin" data-i18n="appNameSub">تلگرام</span></span></div>
     <div class="nav-right">
-      <span class="pill">🌍 عمومی — برای همه</span>
-      <span class="pill ghost">نسخه ۲.۰</span>
+      <button class="nav-icon" id="themeBtn" title="Toggle theme">🌙</button>
+      <button class="nav-icon" id="langBtn" title="Toggle language" data-lang="fa">🇮🇷</button>
+      <span class="version-badge" data-i18n="version">v۳.۰</span>
     </div>
   </div>
 </header>
 
 <main class="wrap">
-
   <section class="hero">
-    <h1>پست‌ساز حرفه‌ای تلگرام، <span class="grad">برای هر کانال و هر موضوعی</span></h1>
-    <p>قالب آماده انتخاب کن، متن رو ویرایش کن، عکس اضافه کن و پیش‌نمایش دقیقاً مثل تلگرام ببین. همه‌چیز داخل مرورگر خودت — بدون ثبت‌نام، بدون اینترنت، بدون محدودیت.</p>
+    <h1 data-i18n="heroTitle">پست‌ساز حرفه‌ای تلگرام، <span class="grad" data-i18n="heroGrad">برای هر کانال و هر موضوعی</span></h1>
+    <p data-i18n="heroDesc">قالب آماده انتخاب کن، متن رو ویرایش کن، عکس اضافه کن و پیش‌نمایش دقیقاً مثل تلگرام ببین. همه‌چیز داخل مرورگر خودت — بدون ثبت‌نام، بدون محدودیت.</p>
     <div class="hero-chips">
-      <span class="hchip">📦 ۸ قالب آماده</span>
-      <span class="hchip">✍️ فرمت‌بندی تلگرام (بولد، اسپویلر و...)</span>
-      <span class="hchip">🖼 آپلود عکس دلخواه</span>
-      <span class="hchip">💾 ذخیره خودکار</span>
+      <span class="hchip">📦 <span data-i18n="chipTemplates">۱۱ قالب آماده</span></span>
+      <span class="hchip">✍️ <span data-i18n="chipFormat">فرمت‌بندی تلگرام</span></span>
+      <span class="hchip">🖼 <span data-i18n="chipImages">چندین تصویر</span></span>
+      <span class="hchip">💾 <span data-i18n="chipSave">ذخیره خودکار</span></span>
     </div>
   </section>
 
   <section class="workspace">
-
-    <!-- ============ CONTROLS ============ -->
     <aside class="panel controls">
-
       <div class="sec">
-        <h3 class="sec-title"><span>📦</span>قالب‌های آماده <span class="hint">جای خالی‌ها رو پر کن</span></h3>
+        <h3 class="sec-title"><span>📦</span><span data-i18n="secTemplates">قالب‌های آماده</span> <span class="hint" data-i18n="tplHint">جای خالی‌ها رو پر کن</span></h3>
         <div class="tpl-grid" id="tplGrid"></div>
       </div>
 
       <div class="sec">
         <h3 class="sec-title">
-          <span>✏️</span>متن پست
+          <span>✏️</span><span data-i18n="secText">متن پست</span>
           <span class="seg" style="margin-right:auto">
-            <button type="button" id="limCap" class="active">کپشن ۱٬۰۲۴</button>
-            <button type="button" id="limMsg">پیام ۴٬۰۹۶</button>
+            <button type="button" id="limCap" class="active" data-i18n="limCap">کپشن ۱٬۰۲۴</button>
+            <button type="button" id="limMsg" data-i18n="limMsg">پیام ۴٬۰۹۶</button>
           </span>
         </h3>
         <div class="fmt-bar">
-          <button class="fmt b" type="button" data-fmt="bold" title="بولد">B</button>
-          <button class="fmt i" type="button" data-fmt="italic" title="ایتالیک">I</button>
-          <button class="fmt c" type="button" data-fmt="code" title="کد">`کد`</button>
-          <button class="fmt" type="button" data-fmt="spoiler" title="اسپویلر">🔒 اسپویلر</button>
-          <button class="fmt" type="button" data-fmt="link" title="لینک">🔗 لینک</button>
+          <button class="fmt b" type="button" data-fmt="bold">B</button>
+          <button class="fmt i" type="button" data-fmt="italic">I</button>
+          <button class="fmt c" type="button" data-fmt="code">`<span data-i18n="codeLabel">کد</span>`</button>
+          <button class="fmt" type="button" data-fmt="spoiler">🔒 <span data-i18n="spoilerLabel">اسپویلر</span></button>
+          <button class="fmt" type="button" data-fmt="link">🔗 <span data-i18n="linkLabel">لینک</span></button>
         </div>
-        <textarea id="postText" dir="auto" spellcheck="false" placeholder="متن پستت رو اینجا بنویس... یا از قالب‌های بالا شروع کن ✨"></textarea>
+        <textarea id="postText" dir="auto" spellcheck="false" data-i18n-placeholder="textPlaceholder" placeholder="متن پستت رو اینجا بنویس... یا از قالب‌های بالا شروع کن ✨"></textarea>
         <div class="counter">
           <span class="num" id="countNum">۰ <small>/ ۱٬۰۲۴</small></span>
           <span class="bar" id="countBar"><i style="width:0%"></i></span>
         </div>
-        <div class="autosave">💾 تغییرات به‌صورت خودکار در مرورگر شما ذخیره می‌شود</div>
+        <div class="autosave">💾 <span data-i18n="autosave">تغییرات به‌صورت خودکار ذخیره می‌شود</span></div>
       </div>
 
       <div class="sec">
-        <h3 class="sec-title"><span>😀</span>ایموجی سریع <span class="hint">کلیک = درج در محل نشانگر</span></h3>
+        <h3 class="sec-title"><span>😀</span><span data-i18n="secEmoji">ایموجی سریع</span> <span class="hint" data-i18n="emojiHint">کلیک = درج در محل نشانگر</span></h3>
         <div class="emoji-row" id="emojiRow"></div>
       </div>
 
       <div class="sec">
-        <h3 class="sec-title"><span>#️⃣</span>هشتگ‌ها <span class="hint">کلیک = افزودن به انتهای متن</span></h3>
+        <h3 class="sec-title"><span>#️⃣</span><span data-i18n="secTags">هشتگ‌ها</span> <span class="hint" data-i18n="tagHint">کلیک = افزودن به انتهای متن</span></h3>
         <div class="chips" id="hashChips"></div>
         <div class="tag-add">
-          <input type="text" id="tagInput" placeholder="هشتگ دلخواه... (مثلاً #کانال_من)" />
-          <button class="btn" type="button" id="tagAddBtn">افزودن</button>
+          <input type="text" id="tagInput" data-i18n-placeholder="tagPlaceholder" placeholder="هشتگ دلخواه... (مثلاً #کانال_من)" />
+          <button class="btn" type="button" id="tagAddBtn">➕</button>
         </div>
       </div>
 
       <div class="sec">
-        <h3 class="sec-title"><span>🖼</span>رسانه پست <span class="hint">اختیاری</span></h3>
-        <div id="mediaEmpty" class="media-box">
+        <h3 class="sec-title"><span>🖼</span><span data-i18n="secMedia">رسانه پست</span> <span class="hint" data-i18n="mediaHint">چندین عکس مجاز</span></h3>
+        <div class="media-grid" id="mediaGrid"></div>
+        <div class="media-box" id="mediaAddBtn">
           <div class="big">📷</div>
-          <p>کلیک کن و عکس پستت رو آپلود کن<br/><small>پیش‌نمایش با عکس + کپشن — بدون عکس = پیام متنی</small></p>
+          <p data-i18n="mediaAdd">کلیک کن و عکس پستت رو آپلود کن</p>
         </div>
-        <div id="mediaFilled" class="media-thumb" hidden>
-          <img id="mediaThumb" alt="پیش‌نمایش رسانه" />
-          <div class="info"><b>تصویر پست</b>برای تغییر، دوباره کلیک کن</div>
-          <button class="btn danger" type="button" id="mediaRemove">🗑 حذف</button>
-        </div>
-        <input type="file" id="imgInput" accept="image/*" hidden />
+        <input type="file" id="imgInput" accept="image/*" multiple hidden />
       </div>
 
       <div class="sec">
-        <h3 class="sec-title"><span>⚙️</span>تنظیمات پیش‌نمایش</h3>
+        <h3 class="sec-title"><span>⚙️</span><span data-i18n="secSettings">تنظیمات پیش‌نمایش</span></h3>
         <div class="grid2">
-          <div class="field"><label for="chName">نام کانال</label><input type="text" id="chName" maxlength="40" /></div>
-          <div class="field"><label for="chAvatar">ایموجی آواتار</label><input type="text" id="chAvatar" maxlength="4" /></div>
-          <div class="field"><label for="chSubs">تعداد مشترک‌ها</label><input type="number" id="chSubs" min="0" /></div>
-          <div class="field"><label for="chViews">بازدید پست</label><input type="number" id="chViews" min="0" /></div>
-          <div class="field"><label for="chTime">ساعت ارسال</label><input type="text" id="chTime" maxlength="8" /></div>
+          <div class="field"><label data-i18n="lblName" for="chName">نام کانال</label><input type="text" id="chName" maxlength="40" /></div>
+          <div class="field"><label data-i18n="lblAvatar" for="chAvatar">ایموجی آواتار</label><input type="text" id="chAvatar" maxlength="4" /></div>
+          <div class="field"><label data-i18n="lblSubs" for="chSubs">تعداد مشترک‌ها</label><input type="number" id="chSubs" min="0" /></div>
+          <div class="field"><label data-i18n="lblViews" for="chViews">بازدید پست</label><input type="number" id="chViews" min="0" /></div>
+          <div class="field"><label data-i18n="lblTime" for="chTime">ساعت ارسال</label><input type="time" id="chTime" /></div>
         </div>
-        <h3 class="sec-title" style="margin-top:16px"><span>💬</span>ری‌اکشن‌های پیش‌نمایش</h3>
+        <h3 class="sec-title" style="margin-top:16px"><span>💬</span><span data-i18n="secReactions">ری‌اکشن‌های پیش‌نمایش</span></h3>
         <div class="chips" id="reactChips"></div>
       </div>
 
       <div class="btn-row">
-        <button class="btn primary" id="copyBtn" type="button">📋 کپی متن پست</button>
-        <button class="btn" id="txtBtn" type="button">⬇ دانلود TXT</button>
-        <button class="btn danger" id="clearBtn" type="button">🗑 پاک کردن همه</button>
+        <button class="btn primary full" id="copyBtn" type="button">📋 <span data-i18n="copyBtn">کپی متن پست</span></button>
+        <button class="btn" id="txtBtn" type="button">⬇ <span data-i18n="txtBtn">دانلود TXT</span></button>
+        <button class="btn" id="mdBtn" type="button">📝 <span data-i18n="mdBtn">دانلود MD</span></button>
+        <button class="btn" id="pngBtn" type="button">🖼 <span data-i18n="pngBtn">خروجی PNG</span></button>
+        <button class="btn danger" id="clearBtn" type="button">🗑 <span data-i18n="clearBtn">پاک کردن همه</span></button>
       </div>
-
     </aside>
 
-    <!-- ============ PREVIEW ============ -->
     <section class="panel preview-panel">
       <div class="tg-head">
-        <span class="lbl">👁 پیش‌نمایش تلگرام</span>
-        <span class="live"><i></i>زنده</span>
+        <span class="lbl">👁 <span data-i18n="previewLbl">پیش‌نمایش تلگرام</span></span>
+        <span class="live"><i></i><span data-i18n="live">زنده</span></span>
       </div>
       <div class="tg-scroll">
-        <article class="tg-bubble">
-          <div class="tg-chan">
-            <div class="tg-av" id="pvAvatar">📢</div>
-            <div>
-              <div class="tg-name" id="pvName">کانال من</div>
-              <div class="tg-sub" id="pvSubs">۱٬۲۸۰ مشترک</div>
+        <div id="telegramPreview">
+          <article class="tg-bubble">
+            <div class="tg-chan">
+              <div class="tg-av" id="pvAvatar">📢</div>
+              <div>
+                <div class="tg-name" id="pvName">کانال من</div>
+                <div class="tg-sub" id="pvSubs">۱٬۲۸۰ مشترک</div>
+              </div>
             </div>
-          </div>
-          <img class="tg-img" id="pvImg" alt="" hidden />
-          <div class="tg-cap" id="pvCap" dir="auto"></div>
-          <div class="tg-foot">
-            <span id="pvTime">۱۲:۳۰</span>
-            <span class="tg-views">👁 <span id="pvViews">۳٬۴۱۲</span></span>
-          </div>
-          <div class="tg-react" id="pvReact"></div>
-        </article>
+            <div class="img-carousel" id="pvCarousel" hidden></div>
+            <div class="tg-cap" id="pvCap" dir="auto"></div>
+            <div class="tg-foot">
+              <span id="pvTime">۱۲:۳۰</span>
+              <span class="tg-views">👁 <span id="pvViews">۳٬۴۱۲</span></span>
+            </div>
+            <div class="tg-react" id="pvReact"></div>
+          </article>
+        </div>
       </div>
     </section>
-
   </section>
 
   <section class="tips">
-    <div class="tip-card">
-      <div class="ic">⏰</div>
-      <h4>بهترین زمان انتشار</h4>
-      <p>صبح ۹ تا ۱۱ و شب ۸ تا ۱ بیشترین تعامل رو داره. برای محتوای آموزشی، آخر هفته‌ها عالیه.</p>
-    </div>
-    <div class="tip-card">
-      <div class="ic">📏</div>
-      <h4>طول ایده‌آل پست</h4>
-      <p>پست‌های ۲۰۰ تا ۵۰۰ کاراکتری بیشترین نرخ خوانده‌شدن رو دارن. پیام اصلی رو اول بنویس، جزئیات بعد.</p>
-    </div>
-    <div class="tip-card">
-      <div class="ic">🎯</div>
-      <h4>کال‌تو‌اکشن یادت نره</h4>
-      <p>هر پست باید یک درخواست مشخص داشته باشه: «سیو کن»، «بفرست برای دوستت»، «نظرت رو بنویس».</p>
-    </div>
-    <div class="tip-card">
-      <div class="ic">🔘</div>
-      <h4>دکمه شیشه‌ای</h4>
-      <p>بعد از کپی متن، با ربات‌هایی مثل ControllerBot دکمه Inline زیر پست اضافه کن تا نرخ کلیک چند برابر بشه.</p>
-    </div>
+    <div class="tip-card"><div class="ic">⏰</div><h4 data-i18n="tip1Title">بهترین زمان انتشار</h4><p data-i18n="tip1Desc">صبح ۹ تا ۱۱ و شب ۸ تا ۱ بیشترین تعامل رو داره. برای محتوای آموزشی، آخر هفته‌ها عالیه.</p></div>
+    <div class="tip-card"><div class="ic">📏</div><h4 data-i18n="tip2Title">طول ایده‌آل پست</h4><p data-i18n="tip2Desc">پست‌های ۲۰۰ تا ۵۰۰ کاراکتری بیشترین نرخ خوانده‌شدن رو دارن. پیام اصلی رو اول بنویس، جزئیات بعد.</p></div>
+    <div class="tip-card"><div class="ic">🎯</div><h4 data-i18n="tip3Title">کال‌تو‌اکشن یادت نره</h4><p data-i18n="tip3Desc">هر پست باید یک درخواست مشخص داشته باشه: «سیو کن»، «بفرست برای دوستت»، «نظرت رو بنویس».</p></div>
+    <div class="tip-card"><div class="ic">🔘</div><h4 data-i18n="tip4Title">دکمه شیشه‌ای</h4><p data-i18n="tip4Desc">بعد از کپی متن، با ربات‌هایی مثل ControllerBot دکمه Inline زیر پست اضافه کن تا نرخ کلیک چند برابر بشه.</p></div>
   </section>
 
-  <footer class="foot">ساخته‌شده با ❤️ برای همه تولیدکننده‌های محتوا · <b>Telegram Post Studio</b> ✈️</footer>
+  <footer class="foot"><span data-i18n="footer">ساخته‌شده با ❤️ برای همه تولیدکننده‌های محتوا</span> · <b data-i18n="footerBrand">Telegram Post Studio</b> ✈️</footer>
 </main>
-
 <div id="toast" role="status"></div>
 
 <script>
 (function(){
 "use strict";
 const $ = s => document.querySelector(s);
-const STORE_KEY = 'tgPostStudioV2';
+const $$ = s => document.querySelectorAll(s);
+const STORE_KEY = 'tgPostStudioV3';
+
+/* ================= i18n ================= */
+const I18N = {
+  fa: {
+    appName:'پست‌ساز', appNameSub:'تلگرام',
+    version:'v۳.۰',
+    heroTitle:'پست‌ساز حرفه‌ای تلگرام،', heroGrad:'برای هر کانال و هر موضوعی',
+    heroDesc:'قالب آماده انتخاب کن، متن رو ویرایش کن، عکس اضافه کن و پیش‌نمایش دقیقاً مثل تلگرام ببین. همه‌چیز داخل مرورگر خودت — بدون ثبت‌نام، بدون محدودیت.',
+    chipTemplates:'۱۱ قالب آماده', chipFormat:'فرمت‌بندی تلگرام', chipImages:'چندین تصویر', chipSave:'ذخیره خودکار',
+    secTemplates:'قالب‌های آماده', tplHint:'جای خالی‌ها رو پر کن',
+    secText:'متن پست', limCap:'کپشن ۱٬۰۲۴', limMsg:'پیام ۴٬۰۹۶',
+    codeLabel:'کد', spoilerLabel:'اسپویلر', linkLabel:'لینک',
+    textPlaceholder:'متن پستت رو اینجا بنویس... یا از قالب‌های بالا شروع کن ✨',
+    autosave:'تغییرات به‌صورت خودکار ذخیره می‌شود',
+    secEmoji:'ایموجی سریع', emojiHint:'کلیک = درج در محل نشانگر',
+    secTags:'هشتگ‌ها', tagHint:'کلیک = افزودن به انتهای متن', tagPlaceholder:'هشتگ دلخواه... (مثلاً #کانال_من)',
+    secMedia:'رسانه پست', mediaHint:'چندین عکس مجاز', mediaAdd:'کلیک کن و عکس پستت رو آپلود کن',
+    secSettings:'تنظیمات پیش‌نمایش',
+    lblName:'نام کانال', lblAvatar:'ایموجی آواتار', lblSubs:'تعداد مشترک‌ها', lblViews:'بازدید پست', lblTime:'ساعت ارسال',
+    secReactions:'ری‌اکشن‌های پیش‌نمایش',
+    copyBtn:'کپی متن پست', txtBtn:'دانلود TXT', mdBtn:'دانلود MD', pngBtn:'خروجی PNG', clearBtn:'پاک کردن همه',
+    previewLbl:'پیش‌نمایش تلگرام', live:'زنده',
+    tip1Title:'بهترین زمان انتشار', tip1Desc:'صبح ۹ تا ۱۱ و شب ۸ تا ۱ بیشترین تعامل رو داره. برای محتوای آموزشی، آخر هفته‌ها عالیه.',
+    tip2Title:'طول ایده‌آل پست', tip2Desc:'پست‌های ۲۰۰ تا ۵۰۰ کاراکتری بیشترین نرخ خوانده‌شدن رو دارن. پیام اصلی رو اول بنویس، جزئیات بعد.',
+    tip3Title:'کال‌تو‌اکشن یادت نره', tip3Desc:'هر پست باید یک درخواست مشخص داشته باشه: «سیو کن»، «بفرست برای دوستت»، «نظرت رو بنویس».',
+    tip4Title:'دکمه شیشه‌ای', tip4Desc:'بعد از کپی متن، با ربات‌هایی مثل ControllerBot دکمه Inline زیر پست اضافه کن تا نرخ کلیک چند برابر بشه.',
+    footer:'ساخته‌شده با ❤️ برای همه تولیدکننده‌های محتوا', footerBrand:'Telegram Post Studio',
+    toastCopied:'📋 متن کپی شد — حالا بچسبون تو تلگرام!',
+    toastNoText:'اول یه متنی بنویس! ✏️',
+    toastTxtDown:'⬇ فایل TXT دانلود شد',
+    toastMdDown:'📝 فایل Markdown دانلود شد',
+    toastCleared:'🗑 همه‌چیز پاک شد — از نو شروع کن!',
+    toastRestored:'💾 پیش‌نویس قبلی شما بازیابی شد ✨',
+    toastImgAdded:'🖼 تصویر اضافه شد',
+    toastImgRemoved:'تصویر حذف شد',
+    toastTagExists:'این هشتگ قبلاً داخل متن هست',
+    toastTagAdded:'هشتگ اضافه شد ✅',
+    toastNoImage:'تصویری برای خروجی وجود نداره',
+    toastPngReady:'🖼 تصویر PNG ذخیره شد',
+    toastCantPng:'خطا در ساخت PNG',
+    toastBadText:'متنی برای دانلود نیست! ✏️',
+    toastOnlyImg:'فقط فایل تصویری مجازه 🖼',
+    toastLink:'یک لینک معتبر اینترنتی وارد کن',
+  },
+  en: {
+    appName:'Telegram', appNameSub:'Post Studio',
+    version:'v۳.۰',
+    heroTitle:'Professional Telegram Post Studio,', heroGrad:'for every channel and every topic',
+    heroDesc:'Pick a template, edit your text, upload images and see a live preview exactly like Telegram. Everything in your browser — no signup, no limits.',
+    chipTemplates:'11 Templates', chipFormat:'Telegram Formatting', chipImages:'Multiple Images', chipSave:'Auto-Save',
+    secTemplates:'Templates', tplHint:'Fill in the blanks',
+    secText:'Post Text', limCap:'Caption 1,024', limMsg:'Message 4,096',
+    codeLabel:'code', spoilerLabel:'Spoiler', linkLabel:'Link',
+    textPlaceholder:'Write your post text here... or pick a template above ✨',
+    autosave:'Changes are auto-saved in your browser',
+    secEmoji:'Quick Emoji', emojiHint:'Click to insert at cursor',
+    secTags:'Hashtags', tagHint:'Click to append to text', tagPlaceholder:'Custom hashtag... (e.g. #my_channel)',
+    secMedia:'Post Media', mediaHint:'Multiple images allowed', mediaAdd:'Click to upload images for your post',
+    secSettings:'Preview Settings',
+    lblName:'Channel Name', lblAvatar:'Avatar Emoji', lblSubs:'Subscribers', lblViews:'Post Views', lblTime:'Post Time',
+    secReactions:'Preview Reactions',
+    copyBtn:'Copy Post Text', txtBtn:'Download TXT', mdBtn:'Download MD', pngBtn:'Export PNG', clearBtn:'Clear All',
+    previewLbl:'Telegram Preview', live:'Live',
+    tip1Title:'Best Posting Time', tip1Desc:'9-11 AM and 8 PM-1 AM have the highest engagement. Weekends work great for educational content.',
+    tip2Title:'Ideal Post Length', tip2Desc:'200-500 character posts have the highest read rate. Put the main message first, details after.',
+    tip3Title:'Don\'t Forget CTA', tip3Desc:'Every post should have a clear request: "Save this", "Share with a friend", "Leave a comment".',
+    tip4Title:'Inline Buttons', tip4Desc:'After copying text, use bots like ControllerBot to add Inline buttons under your post for higher click rates.',
+    footer:'Made with ❤️ for all content creators', footerBrand:'Telegram Post Studio',
+    toastCopied:'📋 Text copied — paste into Telegram!',
+    toastNoText:'Write some text first! ✏️',
+    toastTxtDown:'⬇ TXT file downloaded',
+    toastMdDown:'📝 Markdown file downloaded',
+    toastCleared:'🗑 Everything cleared — start fresh!',
+    toastRestored:'💾 Previous draft restored ✨',
+    toastImgAdded:'🖼 Image added',
+    toastImgRemoved:'Image removed',
+    toastTagExists:'This hashtag already exists in the text',
+    toastTagAdded:'Hashtag added ✅',
+    toastNoImage:'No images to export',
+    toastPngReady:'🖼 Screenshot saved',
+    toastCantPng:'Error generating PNG',
+    toastBadText:'No text to download! ✏️',
+    toastOnlyImg:'Only image files allowed 🖼',
+    toastLink:'Enter a valid URL',
+  }
+};
 
 /* ================= data ================= */
 const TEMPLATES = [
-  {em:'🚀', label:'رونمایی', text:
+  {em:'🚀', label:{fa:'رونمایی',en:'Launch'}, text:
 `🚀 رونمایی از [نام محصول]!
 
 بعد از [مدت زمان] تلاش، بالاخره آماده شد 🎉
@@ -388,7 +478,7 @@ const TEMPLATES = [
 🔗 [لینک]
 
 #رونمایی`},
-  {em:'📦', label:'آپدیت', text:
+  {em:'📦', label:{fa:'آپدیت',en:'Update'}, text:
 `📦 آپدیت جدید [نام محصول] — نسخه [X.Y]
 
 🆕 چه چیزهایی اضافه شد؟
@@ -405,7 +495,7 @@ const TEMPLATES = [
 [لینک]
 
 #آپدیت`},
-  {em:'🎓', label:'آموزش', text:
+  {em:'🎓', label:{fa:'آموزش',en:'Tutorial'}, text:
 `🎓 آموزش: [عنوان آموزش]
 
 تا حالا با [مشکل] درگیر شدی؟ تو این پست یاد می‌گیری چطور [نتیجه] رو به دست بیاری 👇
@@ -421,7 +511,7 @@ const TEMPLATES = [
 🔖 این پست رو سیو کن که بعداً به دردت می‌خوره!
 
 #آموزش`},
-  {em:'📰', label:'خبر', text:
+  {em:'📰', label:{fa:'خبر',en:'News'}, text:
 `📰 فوری | [عنوان خبر]
 
 [خلاصه خبر در یک پاراگراف کوتاه]
@@ -433,7 +523,7 @@ const TEMPLATES = [
 📎 منبع: [لینک منبع]
 
 #خبر`},
-  {em:'🎁', label:'تخفیف', text:
+  {em:'🎁', label:{fa:'تخفیف',en:'Discount'}, text:
 `🎁 تخفیف ویژه [مناسبت]!
 
 فقط تا [تاریخ پایان] ⏰
@@ -448,7 +538,7 @@ const TEMPLATES = [
 🔗 [لینک خرید]
 
 #تخفیف`},
-  {em:'📅', label:'رویداد', text:
+  {em:'📅', label:{fa:'رویداد',en:'Event'}, text:
 `📅 رویداد [نام رویداد]
 
 🗓 تاریخ: [تاریخ]
@@ -465,7 +555,7 @@ const TEMPLATES = [
 جای شما خالیه ✨
 
 #رویداد`},
-  {em:'❓', label:'نظرسنجی', text:
+  {em:'❓', label:{fa:'نظرسنجی',en:'Poll'}, text:
 `❓ سوال امروز:
 
 [سوال جذاب]
@@ -478,18 +568,59 @@ const TEMPLATES = [
 💬 جوابت رو تو کامنت‌ها بنویس و بگو چرا 👇
 
 #نظرسنجی`},
-  {em:'✍️', label:'مینیمال', text:
+  {em:'✍️', label:{fa:'مینیمال',en:'Minimal'}, text:
 `[یک جمله کوتاه و تأثیرگذار]
 
 [توضیح تکمیلی در یک خط]
 
-🔗 [لینک]`}
+🔗 [لینک]`},
+  {em:'🎁', label:{fa:'تخفیف ویژه',en:'Giveaway'}, text:
+`🎁 کد تخفیف انحصاری [نام محصول]
+
+قابل استفاده فقط برای ۵۰ نفر اول 🏃‍♂️
+
+💥 [درصد]٪ تخفیف + ارسال رایگان
+
+✅ کد تخفیف: [CODE]
+
+🔗 [لینک]
+
+#تخفیف_ویژه #حراج`},
+  {em:'🤝', label:{fa:'همکاری',en:'Collab'}, text:
+`🤝 دعوت به همکاری
+
+سلام به دنبال [نقش/تخصص] می‌گردم برای یک پروژه جذاب 🚀
+
+🧩 درباره پروژه:
+[توضیح کوتاه]
+
+🔍 چه کسی رو می‌خوایم:
+• [نیازمندی ۱]
+• [نیازمندی ۲]
+• [نیازمندی ۳]
+
+💬 پیوی‌پیام بدید یا کامنت کنید 👇
+
+#همکاری #استخدام`},
+  {em:'💬', label:{fa:'پرسش و پاسخ',en:'AMA'}, text:
+`💬 AMA — هر سوالی داری بپرس!
+
+من [نام] هستم، [توضیح کوتاه درباره خودت]
+
+🧠 سابقه و تجربه:
+• [دستاورد ۱]
+• [دستاورد ۲]
+• [دستاورد ۳]
+
+❓ هر سوالی داری تو کامنت‌ها بپرس، من جواب می‌دم!
+
+⏰ تا [زمان] فرصت داری
+
+#AMA #پرسش_و_پاسخ`}
 ];
 
 const EMOJIS = ['🔥','⚡','🚀','✨','🎉','💡','📌','✅','⭐','❤️','👀','💪','🧠','🛠','📦','🎁','📢','🔔','👇','🆓','💻','🌟','😍','🤯','💯','⏰','📊','🏆','🔗','🙌'];
-
 const HASHTAGS = ['#آموزش','#خبر','#تکنولوژی','#برنامه_نویسی','#هوش_مصنوع','#ابزار','#رایگان','#تخفیف','#رویداد','#نظرسنجی','#کتاب','#سلامتی','#ورزشی','#هنر','#آشپزی','#کسب_و_کار'];
-
 const REACTIONS = [
   ['fire','🔥',124],
   ['heart','❤️',87],
@@ -499,10 +630,13 @@ const REACTIONS = [
   ['party','🎉',18]
 ];
 
+let lang = 'fa';
+let theme = 'dark';
+
 const DEFAULTS = {
-  text:'', image:null,
+  text:'', images:[],
   channelName:'کانال من', avatar:'📢',
-  subscribers:1280, views:3412, time:'۱۲:۳۰',
+  subscribers:1280, views:3412, time:'12:30',
   limit:'caption',
   reactions:{fire:true, heart:true, like:true, clap:false, wow:false, party:false}
 };
@@ -510,11 +644,27 @@ const DEFAULTS = {
 let state = JSON.parse(JSON.stringify(DEFAULTS));
 let saveTimer = null;
 
+/* ================= i18n apply ================= */
+function applyI18n(l){
+  lang = l;
+  document.documentElement.lang = l === 'fa' ? 'fa' : 'en';
+  document.documentElement.dir = l === 'fa' ? 'rtl' : 'ltr';
+  document.querySelector('[data-lang]').dataset.lang = l;
+  document.querySelector('[data-lang]').textContent = l === 'fa' ? '🇮🇷' : '🇬🇧';
+  $$('[data-i18n]').forEach(el=>{
+    const key = el.dataset.i18n;
+    if(I18N[l] && I18N[l][key]) el.innerHTML = I18N[l][key];
+  });
+  $$('[data-i18n-placeholder]').forEach(el=>{
+    const key = el.dataset.i18nPlaceholder;
+    if(I18N[l] && I18N[l][key]) el.placeholder = I18N[l][key];
+  });
+  buildTemplates();
+}
+
 /* ================= helpers ================= */
-const faNum = n => { const v = Number(n); return isNaN(v) ? '۰' : v.toLocaleString('fa-IR'); };
-
+const faNum = n => { const v = Number(n); return isNaN(v) ? '۰' : v.toLocaleString(lang==='fa'?'fa-IR':lang); };
 function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
 function tgRender(text){
   let h = esc(text);
   h = h.replace(/`([^`\n]+)`/g,'<code>$1</code>');
@@ -525,31 +675,59 @@ function tgRender(text){
   h = h.replace(/(^|[\s>])(https?:\/\/[^\s<]+)/g,(m,p,u)=>p+'<a href="'+u+'" target="_blank" rel="noopener">'+u+'</a>');
   return h;
 }
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(()=>t.classList.remove('show'),2400); }
 
-function toast(msg){
-  const t = $('#toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  clearTimeout(t._h);
-  t._h = setTimeout(()=>t.classList.remove('show'),2400);
+/* ================= URL hash ================= */
+function encodeHash(data){
+  try{ return '#' + btoa(unescape(encodeURIComponent(JSON.stringify(data)))).replace(/=+$/,'').slice(0,5000); }catch(e){ return ''; }
+}
+function decodeHash(){
+  try{
+    const h = location.hash.slice(1);
+    if(!h) return null;
+    const j = decodeURIComponent(escape(atob(h)));
+    return JSON.parse(j);
+  }catch(e){ return null; }
 }
 
 /* ================= persistence ================= */
 function saveState(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(()=>{
-    try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+    try{
+      const save = {text:state.text, images:state.images, channelName:state.channelName, avatar:state.avatar,
+        subscribers:state.subscribers, views:state.views, time:state.time,
+        limit:state.limit, reactions:state.reactions, theme, lang};
+      localStorage.setItem(STORE_KEY, JSON.stringify(save));
+      const h = encodeHash({t:state.text,i:state.images.length>0?'y':'',c:state.channelName});
+      if(h.length < 1000 && h !== location.hash) try{ history.replaceState(null,'',h); }catch(e){}
+    }catch(e){}
   },400);
 }
 function loadState(){
   try{
+    const fromHash = decodeHash();
+    if(fromHash && fromHash.t){
+      state.text = fromHash.t || '';
+      return true;
+    }
     const raw = localStorage.getItem(STORE_KEY);
     if(!raw) return false;
     const saved = JSON.parse(raw);
     state = Object.assign(JSON.parse(JSON.stringify(DEFAULTS)), saved);
     state.reactions = Object.assign({}, DEFAULTS.reactions, saved.reactions||{});
+    if(saved.theme) theme = saved.theme;
+    if(saved.lang) lang = saved.lang;
     return true;
   }catch(e){ return false; }
+}
+
+/* ================= theme ================= */
+function applyTheme(t){
+  theme = t;
+  document.documentElement.setAttribute('data-theme', t);
+  document.querySelector('#themeBtn').textContent = t === 'dark' ? '🌙' : '☀️';
+  document.querySelector('meta[name="theme-color"]').content = t === 'dark' ? '#2AABEE' : '#f4f6fa';
 }
 
 /* ================= rendering ================= */
@@ -566,18 +744,22 @@ function updateCounter(){
 }
 
 function renderPreview(){
-  $('#pvName').textContent = state.channelName || 'کانال من';
+  $('#pvName').textContent = state.channelName || (lang==='fa'?'کانال من':'My Channel');
   $('#pvAvatar').textContent = state.avatar || '📢';
-  $('#pvSubs').textContent = faNum(state.subscribers) + ' مشترک';
+  $('#pvSubs').textContent = faNum(state.subscribers) + (lang==='fa'?' مشترک':' subscribers');
   $('#pvViews').textContent = faNum(state.views);
-  $('#pvTime').textContent = state.time || '۱۲:۳۰';
-
-  const img = $('#pvImg');
-  if(state.image){ img.src = state.image; img.hidden = false; }
-  else { img.hidden = true; img.removeAttribute('src'); }
-
-  $('#pvCap').innerHTML = state.text.trim() ? tgRender(state.text) : '<span style="opacity:.45">متن پست اینجا نمایش داده می‌شود...</span>';
-
+  const t = state.time;
+  $('#pvTime').textContent = t ? t : '12:30';
+  const carousel = $('#pvCarousel');
+  if(state.images && state.images.length){
+    carousel.hidden = false;
+    carousel.innerHTML = state.images.map(src => `<img src="${src}" alt="" />`).join('');
+  } else {
+    carousel.hidden = true;
+    carousel.innerHTML = '';
+  }
+  const placeholder = lang==='fa' ? '<span style="opacity:.45">متن پست اینجا نمایش داده می‌شود...</span>' : '<span style="opacity:.45">Post text will appear here...</span>';
+  $('#pvCap').innerHTML = state.text.trim() ? tgRender(state.text) : placeholder;
   const reactBox = $('#pvReact');
   reactBox.innerHTML = '';
   REACTIONS.forEach(([key,em,count])=>{
@@ -587,21 +769,29 @@ function renderPreview(){
     s.textContent = em + ' ' + faNum(count);
     reactBox.appendChild(s);
   });
-
   updateCounter();
 }
 
-function renderMediaUI(){
-  const empty = $('#mediaEmpty'), filled = $('#mediaFilled');
-  if(state.image){
-    empty.hidden = true; filled.hidden = false;
-    $('#mediaThumb').src = state.image;
-  }else{
-    empty.hidden = false; filled.hidden = true;
+function renderMediaGrid(){
+  const grid = $('#mediaGrid');
+  grid.innerHTML = '';
+  if(state.images && state.images.length){
+    state.images.forEach((src,i)=>{
+      const d = document.createElement('div');
+      d.className = 'media-thumb';
+      d.innerHTML = `<img src="${src}" alt="" /><button class="del" data-idx="${i}">✕</button>`;
+      d.querySelector('.del').addEventListener('click',e=>{
+        e.stopPropagation();
+        state.images.splice(i,1);
+        renderMediaGrid(); renderPreview(); saveState();
+        toast(lang==='fa'?'تصویر حذف شد':'Image removed');
+      });
+      grid.appendChild(d);
+    });
   }
 }
 
-function renderAll(){ renderMediaUI(); renderPreview(); }
+function renderAll(){ renderMediaGrid(); renderPreview(); }
 
 /* ================= builders ================= */
 function buildTemplates(){
@@ -609,28 +799,27 @@ function buildTemplates(){
   TEMPLATES.forEach(t=>{
     const b = document.createElement('button');
     b.type = 'button'; b.className = 'tpl';
-    b.innerHTML = '<span class="em">'+t.em+'</span>'+t.label;
+    const lbl = typeof t.label === 'object' ? t.label[lang]||t.label.fa : t.label;
+    b.innerHTML = '<span class="em">'+t.em+'</span>'+lbl;
     b.addEventListener('click',()=>{
       $('#postText').value = t.text;
       state.text = t.text;
       renderPreview(); saveState();
-      toast('قالب «'+t.label+'» اعمال شد — جاهای خالی [ ] رو پر کن ✏️');
+      toast((lang==='fa'?'قالب «':'Template «')+lbl+(lang==='fa'?'» اعمال شد — جاهای خالی [ ] رو پر کن ✏️':'» applied — fill in the [blanks] ✏️'));
       $('#postText').focus();
     });
     el.appendChild(b);
   });
 }
-
 function buildEmojis(){
   const el = $('#emojiRow'); el.innerHTML = '';
   EMOJIS.forEach(em=>{
     const b = document.createElement('button');
-    b.type='button'; b.className='emo'; b.textContent=em; b.title='درج '+em;
+    b.type='button'; b.className='emo'; b.textContent=em;
     b.addEventListener('click',()=>insertAtCursor(em));
     el.appendChild(b);
   });
 }
-
 function buildHashtags(){
   const el = $('#hashChips'); el.innerHTML = '';
   HASHTAGS.forEach(tag=>{
@@ -640,7 +829,6 @@ function buildHashtags(){
     el.appendChild(b);
   });
 }
-
 function buildReactions(){
   const el = $('#reactChips'); el.innerHTML = '';
   REACTIONS.forEach(([key,em,count])=>{
@@ -662,7 +850,6 @@ function onTextChange(){
   state.text = $('#postText').value;
   renderPreview(); saveState();
 }
-
 function insertAtCursor(str){
   const ta = $('#postText');
   const s = ta.selectionStart ?? ta.value.length;
@@ -672,7 +859,6 @@ function insertAtCursor(str){
   ta.focus();
   onTextChange();
 }
-
 function wrapSelection(before, after, placeholder){
   const ta = $('#postText');
   const s = ta.selectionStart ?? 0, e = ta.selectionEnd ?? 0;
@@ -683,48 +869,70 @@ function wrapSelection(before, after, placeholder){
   ta.selectionEnd = s + before.length + sel.length;
   onTextChange();
 }
-
 function appendHashtag(tag){
   const ta = $('#postText');
-  if(ta.value.includes(tag)){ toast('این هشتگ قبلاً داخل متن هست'); return; }
+  if(ta.value.includes(tag)){ toast(lang==='fa'?'این هشتگ قبلاً داخل متن هست':'Hashtag already exists'); return; }
   const base = ta.value.trimEnd();
   ta.value = (base ? base + '\n' : '') + tag;
   ta.focus();
   onTextChange();
-  toast('هشتگ اضافه شد ✅');
+  toast(lang==='fa'?'هشتگ اضافه شد ✅':'Hashtag added ✅');
 }
 
 /* ================= actions ================= */
 async function copyText(){
   const txt = state.text;
-  if(!txt.trim()){ toast('اول یه متنی بنویس! ✏️'); return; }
-  try{ await navigator.clipboard.writeText(txt); }
-  catch(e){
+  if(!txt.trim()){ toast(lang==='fa'?'اول یه متنی بنویس! ✏️':'Write some text first! ✏️'); return; }
+  try{ await navigator.clipboard.writeText(txt); } catch(e){
     const ta = document.createElement('textarea');
     ta.value = txt; ta.style.position='fixed'; ta.style.opacity='0';
     document.body.appendChild(ta); ta.select();
     try{ document.execCommand('copy'); }catch(_){}
     ta.remove();
   }
-  toast('📋 متن کپی شد — حالا بچسبون تو تلگرام!');
+  toast(lang==='fa'?'📋 متن کپی شد — حالا بچسبون تو تلگرام!':'📋 Text copied — paste into Telegram!');
 }
-
 function downloadTxt(){
-  if(!state.text.trim()){ toast('متنی برای دانلود نیست! ✏️'); return; }
+  if(!state.text.trim()){ toast(lang==='fa'?'متنی برای دانلود نیست! ✏️':'No text to download! ✏️'); return; }
   const blob = new Blob([state.text],{type:'text/plain;charset=utf-8'});
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url; a.download = 'telegram-post.txt';
   document.body.appendChild(a); a.click(); a.remove();
   setTimeout(()=>URL.revokeObjectURL(url),800);
-  toast('⬇ فایل TXT دانلود شد');
+  toast(lang==='fa'?'⬇ فایل TXT دانلود شد':'⬇ TXT file downloaded');
 }
-
+function downloadMd(){
+  if(!state.text.trim()){ toast(lang==='fa'?'متنی برای دانلود نیست! ✏️':'No text to download! ✏️'); return; }
+  const md = `# ${state.channelName}\n\n${state.text}`;
+  const blob = new Blob([md],{type:'text/markdown;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'telegram-post.md';
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),800);
+  toast(lang==='fa'?'📝 فایل Markdown دانلود شد':'📝 Markdown file downloaded');
+}
+function exportPng(){
+  const el = $('#telegramPreview');
+  if(!el || !el.querySelector('img') && !state.text.trim()){
+    toast(lang==='fa'?'متنی یا تصویری برای خروجی وجود نداره':'No content to export');
+    return;
+  }
+  if(typeof html2canvas === 'undefined'){ toast('html2canvas not loaded'); return; }
+  html2canvas(el,{backgroundColor:getComputedStyle(document.documentElement).getPropertyValue('--tg2').trim(),scale:2,useCORS:true}).then(canvas=>{
+    const url = canvas.toDataURL('image/png');
+    const a = document.createElement('a');
+    a.href = url; a.download = 'telegram-post-preview.png';
+    document.body.appendChild(a); a.click(); a.remove();
+    toast(lang==='fa'?'🖼 تصویر PNG ذخیره شد':'🖼 Screenshot saved');
+  }).catch(()=>toast(lang==='fa'?'خطا در ساخت PNG':'Error generating PNG'));
+}
 function clearAll(){
   state = JSON.parse(JSON.stringify(DEFAULTS));
   try{ localStorage.removeItem(STORE_KEY); }catch(e){}
   syncInputs(); buildReactions(); renderAll();
-  toast('🗑 همه‌چیز پاک شد — از نو شروع کن!');
+  toast(lang==='fa'?'🗑 همه‌چیز پاک شد — از نو شروع کن!':'🗑 Everything cleared — start fresh!');
 }
 
 /* ================= inputs sync ================= */
@@ -741,30 +949,30 @@ function syncInputs(){
 
 /* ================= bindings ================= */
 $('#postText').addEventListener('input', onTextChange);
-
 $('#chName').addEventListener('input',e=>{ state.channelName=e.target.value; renderPreview(); saveState(); });
 $('#chAvatar').addEventListener('input',e=>{ state.avatar=e.target.value; renderPreview(); saveState(); });
-$('#chSubs').addEventListener('input',e=>{ state.subscribers=e.target.value; renderPreview(); saveState(); });
-$('#chViews').addEventListener('input',e=>{ state.views=e.target.value; renderPreview(); saveState(); });
+$('#chSubs').addEventListener('input',e=>{ state.subscribers=Number(e.target.value)||0; renderPreview(); saveState(); });
+$('#chViews').addEventListener('input',e=>{ state.views=Number(e.target.value)||0; renderPreview(); saveState(); });
 $('#chTime').addEventListener('input',e=>{ state.time=e.target.value; renderPreview(); saveState(); });
-
 $('#limCap').addEventListener('click',()=>{ state.limit='caption'; syncInputs(); updateCounter(); saveState(); });
 $('#limMsg').addEventListener('click',()=>{ state.limit='message'; syncInputs(); updateCounter(); saveState(); });
-
 document.querySelectorAll('.fmt').forEach(b=>{
   b.addEventListener('click',()=>{
     const f = b.dataset.fmt;
-    if(f==='bold') wrapSelection('**','**','متن بولد');
-    if(f==='italic') wrapSelection('__','__','متن ایتالیک');
-    if(f==='code') wrapSelection('`','`','کد');
-    if(f==='spoiler') wrapSelection('||','||','متن مخفی');
-    if(f==='link') wrapSelection('[','](https://)','متن لینک');
+    if(f==='bold') wrapSelection('**','**',lang==='fa'?'متن بولد':'bold text');
+    if(f==='italic') wrapSelection('__','__',lang==='fa'?'متن ایتالیک':'italic text');
+    if(f==='code') wrapSelection('`','`',lang==='fa'?'کد':'code');
+    if(f==='spoiler') wrapSelection('||','||',lang==='fa'?'متن مخفی':'hidden text');
+    if(f==='link'){
+      const url = prompt(lang==='fa'?'لینک رو وارد کن:':'Enter URL:','https://');
+      if(url && url.startsWith('http')) wrapSelection('[',']('+url+')',lang==='fa'?'متن لینک':'link text');
+      else toast(lang==='fa'?'یک لینک معتبر اینترنتی وارد کن':'Enter a valid URL');
+    }
   });
 });
-
 $('#tagAddBtn').addEventListener('click',()=>{
   let v = $('#tagInput').value.trim();
-  if(!v){ toast('یه هشتگ بنویس!'); return; }
+  if(!v){ toast(lang==='fa'?'یه هشتگ بنویس!':'Enter a hashtag!'); return; }
   if(!v.startsWith('#')) v = '#' + v.replace(/\s+/g,'_');
   appendHashtag(v);
   $('#tagInput').value = '';
@@ -772,41 +980,56 @@ $('#tagAddBtn').addEventListener('click',()=>{
 $('#tagInput').addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); $('#tagAddBtn').click(); } });
 
 /* media */
-$('#mediaEmpty').addEventListener('click',()=>$('#imgInput').click());
-$('#mediaFilled').addEventListener('click',e=>{ if(e.target.id!=='mediaRemove') $('#imgInput').click(); });
-$('#mediaRemove').addEventListener('click',e=>{
-  e.stopPropagation();
-  state.image = null; $('#imgInput').value='';
-  renderMediaUI(); renderPreview(); saveState();
-  toast('تصویر حذف شد');
-});
+$('#mediaAddBtn').addEventListener('click',()=>$('#imgInput').click());
 $('#imgInput').addEventListener('change',e=>{
-  const f = e.target.files[0];
-  if(!f) return;
-  if(!f.type.startsWith('image/')){ toast('فقط فایل تصویری مجازه 🖼'); return; }
-  const r = new FileReader();
-  r.onload = ()=>{ state.image = r.result; renderMediaUI(); renderPreview(); saveState(); toast('تصویر اضافه شد 🖼'); };
-  r.readAsDataURL(f);
+  const files = Array.from(e.target.files);
+  if(!files.length) return;
+  const imgs = files.filter(f=>f.type.startsWith('image/'));
+  if(!imgs.length){ toast(lang==='fa'?'فقط فایل تصویری مجازه 🖼':'Only image files allowed 🖼'); return; }
+  let loaded = 0;
+  imgs.forEach(f=>{
+    const r = new FileReader();
+    r.onload = ()=>{
+      state.images = state.images || [];
+      state.images.push(r.result);
+      loaded++;
+      if(loaded === imgs.length){
+        renderMediaGrid(); renderPreview(); saveState();
+        toast(lang==='fa'?`🖼 ${loaded} تصویر اضافه شد`:`🖼 ${loaded} image(s) added`);
+      }
+    };
+    r.readAsDataURL(f);
+  });
+  e.target.value = '';
 });
-
-/* spoiler reveal in preview */
+/* spoiler reveal */
 $('#pvCap').addEventListener('click',e=>{
   if(e.target.classList && e.target.classList.contains('spoil')) e.target.classList.toggle('revealed');
 });
-
+/* buttons */
 $('#copyBtn').addEventListener('click',copyText);
 $('#txtBtn').addEventListener('click',downloadTxt);
+$('#mdBtn').addEventListener('click',downloadMd);
+$('#pngBtn').addEventListener('click',exportPng);
 $('#clearBtn').addEventListener('click',clearAll);
+/* theme toggle */
+$('#themeBtn').addEventListener('click',()=>{ applyTheme(theme==='dark'?'light':'dark'); saveState(); });
+/* lang toggle */
+$('#langBtn').addEventListener('click',()=>{ applyI18n(lang==='fa'?'en':'fa'); saveState(); buildTemplates(); });
 
 /* ================= init ================= */
 const restored = loadState();
+applyTheme(theme);
+applyI18n(lang);
 buildTemplates();
 buildEmojis();
 buildHashtags();
 buildReactions();
 syncInputs();
 renderAll();
-if(restored && state.text.trim()) toast('💾 پیش‌نویس قبلی شما بازیابی شد ✨');
+if(restored && state.text.trim()) toast(lang==='fa'?'💾 پیش‌نویس قبلی شما بازیابی شد ✨':'💾 Previous draft restored ✨');
+/* PWA register */
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
 })();
 </script>
 </body>

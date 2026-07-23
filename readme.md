@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/Version-2.0-blue" alt="Version 2.0" />
+  <img src="https://img.shields.io/badge/Version-3.0-blue" alt="Version 3.0" />
   <a href="https://github.com/aghorbani84/AtelegramPostCreator/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-green" alt="License: MIT" /></a>
   <img src="https://img.shields.io/badge/HTML5-E34F26?style=flat&logo=html5&logoColor=white" alt="HTML5" />
   <img src="https://img.shields.io/badge/CSS3-1572B6?style=flat&logo=css3&logoColor=white" alt="CSS3" />
@@ -56,18 +56,25 @@ Built for Persian-speaking content creators and channel admins who want a fast, 
 
 | Feature | Description |
 |---|---|
-| 📦 **8 Pre-built Templates** | Launch, Update, Tutorial, News, Discount, Event, Poll, Minimal — fill in the blanks and go |
+| 📦 **11 Pre-built Templates** | Launch, Update, Tutorial, News, Discount, Event, Poll, Minimal, Giveaway, Collab, AMA — fill in the blanks and go |
 | ✏️ **Rich Text Formatting** | Bold, italic, code, spoiler, inline links — with toolbar buttons |
 | 😀 **Emoji Picker** | 30 hand-picked emojis — click to insert at cursor position |
 | #️⃣ **Hashtag System** | 16 built-in Persian hashtags + add your own custom tags |
-| 🖼 **Image Upload** | Attach any image — previewed inside a Telegram-style bubble |
+| 🖼 **Multi-Image Upload** | Attach multiple images — carousel preview inside a Telegram-style bubble |
 | 📊 **Character Counter** | Live counter with progress bar — toggle between Caption (1,024) and Message (4,096) limits |
-| 👁 **Live Telegram Preview** | Pixel-accurate dark-theme preview: channel name, avatar, subscribers, views, time, reactions |
+| 👁 **Live Telegram Preview** | Pixel-accurate preview: channel name, avatar, subscribers, views, time, reactions |
 | ⚙️ **Channel Customization** | Set channel name, emoji avatar, subscriber count, view count, posting time |
 | 💬 **Reaction Preview** | Toggle reactions (🔥❤️👍👏🤩🎉) on/off to see how your post looks with engagement |
 | 💾 **Auto-Save** | All changes saved to `localStorage` — resume your draft even after closing the browser |
 | 📋 **Copy to Clipboard** | One-click copy — paste directly into Telegram |
 | ⬇️ **Download TXT** | Export your post as a UTF-8 text file |
+| 📝 **Download MD** | Export as Markdown for Telegram Desktop paste |
+| 🖼 **Export PNG** | Export the preview as a PNG screenshot using html2canvas |
+| 🌙☀️ **Light/Dark Theme** | Toggle between dark and light themes |
+| 🌍 **i18n** | Switch between Persian 🇮🇷 and English 🇬🇧 — UI and templates localize instantly |
+| 📱 **PWA** | Service worker + manifest — install as a standalone app, works offline after first load |
+| 🔗 **URL Hash Sharing** | Config encoded in the URL hash — share your setup with a link |
+| ⏰ **Time Picker** | Native `<input type="time">` picker for post scheduling simulation |
 | 🌙 **Dark Glassmorphism UI** | Animated blobs, grid backdrop, glass panels — looks premium |
 | 📱 **Fully Responsive** | 2-column on desktop, single-column on mobile/tablet |
 | 🔌 **Zero Dependencies** | Pure HTML + CSS + JS — no frameworks, no build step, no Node |
@@ -83,6 +90,9 @@ Built for Persian-speaking content creators and channel admins who want a fast, 
 | 🎁 | تخفیف | Discount / promotional offer |
 | 📅 | رویداد | Event announcement |
 | ❓ | نظرسنجی | Poll / question for engagement |
+| 🎁 | تخفیف ویژه | Exclusive discount / giveaway limited to first N people |
+| 🤝 | همکاری | Collaboration / job invitation post |
+| 💬 | AMA | Ask Me Anything — Q&A engagement post |
 | ✍️ | مینیIMAL | Minimal one-liner |
 
 Each template has `[placeholders]` — replace them with your content, and you're ready to post.
@@ -132,11 +142,16 @@ Toggle between **Caption** (1,024 char) and **Message** (4,096 char) limits usin
 
 Click any emoji in the row to insert it at your cursor. Click a hashtag chip to append it to your post. Use the input field at the bottom to add custom hashtags.
 
-### 4. Upload an Image (Optional)
+### 4. Upload Images (Optional)
 
-Click the 📷 media area to upload an image. It appears in the preview inside a Telegram-style message bubble. Click 🗑 to remove it.
+Click the 📷 media area to upload one or more images. They appear in a carousel inside the Telegram-style preview. Click ✕ on any thumbnail to remove it.
 
-### 5. Customize the Preview
+### 5. i18n & Theme
+
+- Click 🌙/☀️ in the nav bar to toggle between dark and light themes
+- Click 🇮🇷/🇬🇧 to switch the entire UI between Persian and English (templates localize too)
+
+### 6. Customize the Preview
 
 In the **Settings** section, customize:
 - Channel name
@@ -146,20 +161,24 @@ In the **Settings** section, customize:
 - Posting time
 - Toggle reactions on/off
 
-### 6. Export
+### 7. Export
 
 - **📋 Copy** — copies the raw text to your clipboard, ready to paste into Telegram
 - **⬇ Download TXT** — saves the post as a `.txt` file
+- **📝 Download MD** — saves as Markdown (`.md`) for Telegram Desktop paste
+- **🖼 Export PNG** — renders the preview as a PNG screenshot and downloads it
 
 ## 🧰 Tech Stack
 
 | Layer | Technology | Why |
 |---|---|---|
 | Markup | HTML5 | Semantic, accessible, zero build |
-| Styling | Vanilla CSS3 | `color-mix()`, `backdrop-filter`, CSS Grid, custom scrollbars |
-| Logic | Vanilla JavaScript (ES2020+) | No framework overhead, fully readable, ~300 lines of logic |
+| Styling | Vanilla CSS3 | Light/dark theme via `data-theme` attribute, `color-mix()`, `backdrop-filter`, CSS Grid, custom scrollbars |
+| Logic | Vanilla JavaScript (ES2020+) | No framework overhead, fully readable, i18n engine built-in |
 | Typography | [Vazirmatn](https://github.com/rastikerdar/vazirmatn) via CDN | Beautiful Persian/Arabic web font |
 | Persistence | `localStorage` | Auto-save, auto-restore, zero server |
+| PWA | `manifest.json` + `sw.js` | Service worker caches font + app shell, installable |
+| PNG Export | [html2canvas](https://html2canvas.hertzen.com/) via CDN | Renders preview to PNG screenshot |
 
 ## 🏗️ Architecture
 
@@ -192,15 +211,15 @@ In the **Settings** section, customize:
 
 ## 🗺️ Roadmap
 
-- [ ] Light theme toggle
-- [ ] Multiple image attachment support
-- [ ] Export as PNG screenshot of the preview
-- [ ] More templates ( giveaway, collaboration, AMA… )
-- [ ] i18n toggle (Persian 🇮🇷 / English 🇬🇧)
-- [ ] PWA install + offline caching of CDN assets
-- [ ] URL hash config sharing (`#config=...`)
-- [ ] Post scheduling simulation with time picker
-- [ ] Markdown export (for Telegram Desktop paste)
+- [x] Light theme toggle
+- [x] Multiple image attachment support
+- [x] Export as PNG screenshot of the preview
+- [x] More templates (Giveaway, Collaboration, AMA)
+- [x] i18n toggle (Persian 🇮🇷 / English 🇬🇧)
+- [x] PWA install + offline caching of CDN assets
+- [x] URL hash config sharing (`#config=...`)
+- [x] Post scheduling simulation with time picker
+- [x] Markdown export (for Telegram Desktop paste)
 
 PRs welcome for any of the above — see [Contributing](#-contributing).
 
@@ -222,7 +241,19 @@ Please follow [Conventional Commits](https://www.conventionalcommits.org/) and k
 A: No. Open `index.html` in any modern browser. That's the whole setup.
 
 **Q: Does it send my data anywhere?**
-A: No. Everything runs locally in your browser. The only network request is the Vazirmatn font from a CDN — and GitHub itself also loads web fonts when rendering your content.
+A: No. Everything runs locally in your browser. Network requests include the Vazirmatn font CDN, html2canvas CDN (for PNG export), and the service worker cache — no telemetry, no analytics.
+
+**Q: How does the theme toggle work?**
+A: Click 🌙/☀️ in the nav bar. The entire UI toggles between dark and light themes, persisted in localStorage across sessions.
+
+**Q: Can I switch the UI language?**
+A: Yes. Click the 🇮🇷/🇬🇧 button in the nav bar to switch between Persian (RTL) and English (LTR). All labels, templates, placeholders, and toasts localize instantly.
+
+**Q: How do I share my configuration?**
+A: Your current text and channel settings are encoded in the URL hash. Copy the URL from your browser's address bar — anyone who opens it will see your setup.
+
+**Q: Can I use this offline?**
+A: Yes. Open the app once to cache the service worker and fonts. After that, it works entirely offline. You can also install it as a PWA ("Add to Home Screen").
 
 **Q: Where is my data saved?**
 A: In your browser's `localStorage`. Close the tab, reopen it later — your draft is still there.
