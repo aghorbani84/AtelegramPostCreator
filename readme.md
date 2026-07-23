@@ -3,7 +3,7 @@
   <a href="https://github.com/aghorbani84/AtelegramPostCreator/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License: MIT" /></a>
 </p>
 
-<h1 align="center">🚀 AtegramPostCreator</h1>
+<h1 align="center">🚀 AtelegramPostCreator</h1>
 
 <p align="center">
   <em>Effortlessly craft and manage professional Telegram posts with rich formatting and media support.</em>
@@ -62,7 +62,7 @@ Follow these steps to get **AtelegramPostCreator** up and running on your local 
 1.  **Clone the repository:**
     ```bash
     git clone https://github.com/aghorbani84/AtelegramPostCreator.git
-    cd AtegramPostCreator
+    cd AtelegramPostCreator
     ```
 
 2.  **Install dependencies:**
