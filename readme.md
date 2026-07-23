@@ -7,6 +7,7 @@
   <img src="https://img.shields.io/badge/Zero_Deps-0D9488" alt="Zero Dependencies" />
   <img src="https://img.shields.io/badge/Offline-Ready-brightgreen" alt="Offline Ready" />
   <img src="https://img.shields.io/badge/RTL-فارسی-9333EA" alt="RTL Persian" />
+  <img src="https://img.shields.io/badge/PWA-Ready-5C0D0D" alt="PWA Ready" />
 </p>
 
 <h1 align="center">✈️ پست‌ساز تلگرام — Telegram Post Studio</h1>
@@ -17,6 +18,7 @@
 </p>
 
 <p align="center">
+  <a href="https://aghorbani84.github.io/AtelegramPostCreator/">🚀 Live App</a> &nbsp;·&nbsp;
   <a href="https://github.com/aghorbani84/AtelegramPostCreator/issues">🐛 Report Bug</a> &nbsp;·&nbsp;
   <a href="https://github.com/aghorbani84/AtelegramPostCreator/issues">✨ Request Feature</a>
 </p>
@@ -99,7 +101,11 @@ Each template has `[placeholders]` — replace them with your content, and you'r
 
 ## 🚀 Quick Start
 
-### Option 1 — Use it directly
+### Option 1 — Use it online (recommended)
+
+Open 👉 **[aghorbani84.github.io/AtelegramPostCreator](https://aghorbani84.github.io/AtelegramPostCreator/)** in your browser. That's it — zero install.
+
+### Option 2 — Use it locally
 
 Just open `index.html` in any modern browser. That's it.
 
