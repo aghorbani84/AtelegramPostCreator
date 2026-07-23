@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>پست‌ساز تلگرام — AreadmeForge</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/fontsource/css/vazirmatn@latest/index.css" />
+<style>
+  :root{
+    --bg:#05070d;
+    --panel:rgba(255,255,255,.045);
+    --panel2:rgba(255,255,255,.02);
+    --border:rgba(255,255,255,.09);
+    --text:#e7edf4;
+    --muted:#8b96a5;
+    --accent:#2AABEE;
+    --accent2:#229ED9;
+    --tg:#17212b;
+    --tg2:#0e1621;
+    --radius:16px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Vazirmatn',system-ui,-apple-system,sans-serif;
+    background:var(--bg);color:var(--text);
+    min-height:100vh;overflow-x:hidden;line-height:1.85;
+  }
+  ::selection{background:color-mix(in srgb,var(--accent) 45%,transparent)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px;border:2px solid var(--bg)}
+  ::-webkit-scrollbar-track{background:transparent}
+
+  .blob{position:fixed;border-radius:50%;filter:blur(130px);z-index:-2;opacity:.26;animation:drift 20s ease-in-out infinite alternate}
+  .b1{width:520px;height:520px;background:var(--accent);top:-160px;right:-140px}
+  .b2{width:460px;height:460px;background:#a78bfa;bottom:-180px;left:-120px;animation-delay:-10s}
+  @keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(-70px,45px) scale(1.15)}}
+  body::before{
+    content:'';position:fixed;inset:0;z-index:-1;pointer-events:none;
+    background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);
+    background-size:44px 44px;
+    -webkit-mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 30%,transparent 75%);
+    mask-image:radial-gradient(ellipse 90% 60% at 50% 0%,#000 30%,transparent 75%);
+  }
+
+  .nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);background:rgba(5,7,13,.72);border-bottom:1px solid var(--border)}
+  .nav-inner{max-width:1280px;margin:0 auto;padding:13px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:17px}
+  .logo-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#a78bfa);font-size:17px;box-shadow:0 6px 18px color-mix(in srgb,var(--accent) 40%,transparent)}
+  .logo .thin{color:var(--muted);font-weight:500}
+  .nav-right{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px;background:color-mix(in srgb,var(--accent) 15%,transparent);border:1px solid color-mix(in srgb,var(--accent) 35%,transparent)}
+  .pill.ghost{background:rgba(255,255,255,.04);border-color:var(--border);color:var(--muted)}
+
+  .wrap{max-width:1280px;margin:0 auto;padding:0 24px 60px}
+
+  .hero{padding:48px 0 30px;text-align:center;animation:fadeUp .7s ease both}
+  .hero h1{font-size:clamp(28px,4.4vw,48px);line-height:1.25;font-weight:800;letter-spacing:-.01em}
+  .grad{background:linear-gradient(92deg,var(--accent),#a78bfa);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{margin:14px auto 0;max-width:680px;color:var(--muted);font-size:15.5px}
+  .hero code{font-family:inherit;font-size:.9em;background:rgba(255,255,255,.08);padding:2px 8px;border-radius:6px;color:var(--text);direction:ltr;display:inline-block}
+  .hero-chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:20px}
+  .hchip{font-size:13px;color:var(--muted);border:1px solid var(--border);background:var(--panel2);padding:7px 14px;border-radius:999px}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+
+  .workspace{display:grid;grid-template-columns:1fr 420px;gap:22px;align-items:start}
+  .panel{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015));border:1px solid var(--border);border-radius:var(--radius);box-shadow:0 20px 60px rgba(0,0,0,.35)}
+  .controls{padding:22px;animation:fadeUp .7s .1s ease both}
+  .preview-panel{position:sticky;top:78px;overflow:hidden;display:flex;flex-direction:column;animation:fadeUp .7s .2s ease both}
+
+  .sec{padding:16px 0;border-bottom:1px dashed var(--border)}
+  .sec:first-child{padding-top:2px}
+  .sec-title{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:14px}
+
+  .tabs{display:flex;gap:8px;flex-wrap:wrap}
+  .tab{font:inherit;font-size:13px;font-weight:600;color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:9px 16px;cursor:pointer;transition:all .18s;flex:1;min-width:90px}
+  .tab:hover{border-color:rgba(255,255,255,.22);color:var(--text)}
+  .tab.active{color:#fff;border-color:color-mix(in srgb,var(--accent) 60%,transparent);background:color-mix(in srgb,var(--accent) 18%,transparent);box-shadow:0 6px 18px color-mix(in srgb,var(--accent) 22%,transparent)}
+
+  .field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px;font-weight:600}
+  .field label em{font-style:normal;font-weight:500;opacity:.7;font-size:11px}
+  textarea#postText{width:100%;background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:12px;color:var(--text);padding:14px;font:inherit;font-size:14px;line-height:2;resize:vertical;min-height:280px;transition:border-color .2s,box-shadow .2s;direction:rtl}
+  textarea#postText:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+
+  .counter{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px}
+  .counter .num{font-size:12.5px;font-weight:700;font-variant-numeric:tabular-nums}
+  .counter .num small{color:var(--muted);font-weight:500}
+  .bar{flex:1;height:6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}
+  .bar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),#a78bfa);transition:width .25s,background .25s}
+  .bar.over i{background:linear-gradient(90deg,#ef4444,#f59e0b)}
+  .num.over{color:#ef4444}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{font:inherit;font-size:12.5px;font-weight:600;color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:999px;padding:6px 13px;cursor:pointer;transition:all .18s;direction:rtl}
+  .chip:hover{border-color:color-mix(in srgb,var(--accent) 50%,transparent);color:var(--text);transform:translateY(-1px)}
+
+  .btn{font:inherit;font-size:13px;font-weight:700;border-radius:11px;padding:10px 16px;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--text);transition:all .2s;display:inline-flex;align-items:center;justify-content:center;gap:7px}
+  .btn:hover{transform:translateY(-1px);border-color:rgba(255,255,255,.22)}
+  .btn:active{transform:translateY(0) scale(.98)}
+  .btn.primary{border:none;color:#fff;background:linear-gradient(135deg,var(--accent),#a78bfa);box-shadow:0 8px 22px color-mix(in srgb,var(--accent) 35%,transparent);position:relative;overflow:hidden}
+  .btn.primary::after{content:'';position:absolute;top:0;right:-80%;width:50%;height:100%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.35),transparent);transform:skewX(-20deg);transition:right .5s}
+  .btn.primary:hover::after{right:130%}
+  .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+
+  /* telegram preview */
+  .tg-head{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid var(--border);background:rgba(0,0,0,.25)}
+  .tg-head .lbl{font-size:12px;font-weight:700;color:var(--muted);display:flex;align-items:center;gap:7px}
+  .tg-head .live{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:#3fb950;letter-spacing:.04em}
+  .tg-head .live i{width:7px;height:7px;border-radius:50%;background:#3fb950;animation:pulse 1.6s infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(63,185,80,.5)}50%{box-shadow:0 0 0 6px rgba(63,185,80,0)}}
+
+  .tg-scroll{overflow:auto;max-height:calc(100vh - 150px);padding:18px 14px;background:
+    radial-gradient(circle at 20% 10%,rgba(42,171,238,.06),transparent 40%),
+    radial-gradient(circle at 80% 90%,rgba(167,139,250,.06),transparent 40%),
+    var(--tg2)}
+  .tg-bubble{background:var(--tg);border-radius:14px 14px 4px 14px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.4);max-width:380px;margin:0 auto}
+  .tg-chan{display:flex;align-items:center;gap:10px;padding:10px 12px}
+  .tg-av{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#a78bfa);display:grid;place-items:center;font-size:18px;flex:none;box-shadow:0 4px 12px color-mix(in srgb,var(--accent) 40%,transparent)}
+  .tg-name{font-size:13.5px;font-weight:700;color:#fff}
+  .tg-sub{font-size:11px;color:#7d8b99}
+  .tg-img{width:100%;display:block;aspect-ratio:1/1;object-fit:cover;background:#000}
+  .tg-cap{padding:12px 14px 6px;font-size:13.5px;line-height:1.95;color:#dfe6ee;white-space:pre-wrap;word-break:break-word}
+  .tg-cap a{color:var(--accent);text-decoration:none}
+  .tg-cap a:hover{text-decoration:underline}
+  .tg-foot{display:flex;align-items:center;justify-content:space-between;padding:4px 14px 10px;font-size:11px;color:#7d8b99}
+  .tg-views{display:flex;align-items:center;gap:5px}
+  .tg-react{display:flex;gap:6px;padding:0 14px 12px;flex-wrap:wrap}
+  .tg-r{font-size:12px;background:rgba(42,171,238,.12);border:1px solid rgba(42,171,238,.25);color:#9fd3f0;border-radius:999px;padding:3px 9px;display:flex;align-items:center;gap:4px}
+
+  .tips{margin-top:22px;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+  .tip-card{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:16px;animation:fadeUp .7s .3s ease both}
+  .tip-card .ic{font-size:22px;margin-bottom:8px}
+  .tip-card h4{font-size:14px;font-weight:700;margin-bottom:6px}
+  .tip-card p{font-size:12.5px;color:var(--muted);line-height:1.8}
+
+  .foot{text-align:center;color:var(--muted);font-size:13px;padding:30px 0 8px}
+  .foot b{color:var(--text)}
+
+  #toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,90px);background:#10151d;border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);color:var(--text);padding:13px 22px;border-radius:14px;font-size:14px;font-weight:600;opacity:0;transition:all .4s cubic-bezier(.2,.9,.3,1.15);z-index:99;box-shadow:0 16px 50px rgba(0,0,0,.55);pointer-events:none}
+  #toast.show{transform:translate(-50%,0);opacity:1}
+
+  @media(max-width:1024px){
+    .workspace{grid-template-columns:1fr}
+    .preview-panel{position:static;order:-1}
+    .tg-scroll{max-height:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="logo">
+      <span class="logo-mark">✈️</span>
+      <span>پست‌ساز <span class="thin">تلگرام</span></span>
+    </div>
+    <div class="nav-right">
+      <span class="pill">⚡ AreadmeForge</span>
+      <span class="pill ghost">فارسی</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <h1>پست تلگرامی <span class="grad">AreadmeForge</span> آماده انتشار است!</h1>
+    <p>سه واریانت متن حرفه‌ای، پیش‌نمایش زنده دقیقاً مثل کلاینت تلگرام، شمارنده کاراکتر و دکمه کپی. فقط کپی کن و تو کانالت بفرست 🚀</p>
+    <div class="hero-chips">
+      <span class="hchip">✍️ متن قابل ویرایش</span>
+      <span class="hchip">🖼 بنر آماده</span>
+      <span class="hchip">📏 رعایت محدودیت ۱۰۲۴</span>
+      <span class="hchip">#️⃣ هشتگ‌های پیشنهادی</span>
+    </div>
+  </section>
+
+  <section class="workspace">
+
+    <!-- ============ CONTROLS ============ -->
+    <aside class="panel controls">
+
+      <div class="sec">
+        <h3 class="sec-title"><span>📝</span>واریانت پست</h3>
+        <div class="tabs" id="varTabs">
+          <button class="tab active" data-v="full" type="button">📦 کامل</button>
+          <button class="tab" data-v="short" type="button">⚡ کوتاه</button>
+          <button class="tab" data-v="story" type="button">🎯 داستانی</button>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3 class="sec-title"><span>✏️</span>متن پست <em style="margin-right:auto;font-style:normal;font-weight:500;opacity:.7;font-size:11px">قابل ویرایش</em></h3>
+        <div class="field">
+          <textarea id="postText" spellcheck="false"></textarea>
+        </div>
+        <div class="counter">
+          <span class="num" id="countNum">0 <small>/ 1024</small></span>
+          <span class="bar" id="countBar"><i style="width:0%"></i></span>
+        </div>
+      </div>
+
+      <div class="sec">
+        <h3 class="sec-title"><span>#️⃣</span>افزودن هشتگ <em style="margin-right:auto;font-style:normal;font-weight:500;opacity:.7;font-size:11px">کلیک = اضافه به انتهای متن</em></h3>
+        <div class="chips" id="hashChips"></div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn primary" id="copyBtn" type="button">📋 کپی متن</button>
+        <button class="btn" id="imgBtn" type="button">🖼 دانلود بنر</button>
+      </div>
+
+    </aside>
+
+    <!-- ============ PREVIEW ============ -->
+    <section class="panel preview-panel">
+      <div class="tg-head">
+        <span class="lbl">👁 پیش‌نمایش تلگرام</span>
+        <span class="live"><i></i>زنده</span>
+      </div>
+      <div class="tg-scroll">
+        <article class="tg-bubble">
+          <div class="tg-chan">
+            <div class="tg-av">⚡</div>
+            <div>
+              <div class="tg-name">AreadmeForge | ابزار دولوپر</div>
+              <div class="tg-sub">۱٬۲۸ مشترک</div>
+            </div>
+          </div>
+          <img class="tg-img" id="tgImg" alt="بنر AreadmeForge" />
+          <div class="tg-cap" id="tgCap"></div>
+          <div class="tg-foot">
+            <span>۱۲:۳۰</span>
+            <span class="tg-views">👁 <span id="tgViews">۳۴۱۲</span></span>
+          </div>
+          <div class="tg-react">
+            <span class="tg-r">🔥 ۱۲۴</span>
+            <span class="tg-r">❤️ ۸۷</span>
+            <span class="tg-r">👍 ۵۶</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+  </section>
+
+  <section class="tips">
+    <div class="tip-card">
+      <div class="ic">⏰</div>
+      <h4>بهترین زمان انتشار</h4>
+      <p>صبح ۹ تا ۱۱ و شب ۸ تا ۱ بیشترین تعامل رو می‌گیری. آخر هفته‌ها هم برای محتوای دولوپری عالیه.</p>
+    </div>
+    <div class="tip-card">
+      <div class="ic">📌</div>
+      <h4>پست رو پین کن</h4>
+      <p>بعد از انتشار، پست رو Pin کن تا بازدیدکننده‌های جدید اول همین رو ببینن و وارد دمو بشن.</p>
+    </div>
+    <div class="tip-card">
+      <div class="ic">🔘</div>
+      <h4>دکمه شیشه‌ای بذار</h4>
+      <p>با ربات‌هایی مثل ControllerBot یه Inline Button «مشاهده دمو 🚀» زیر پست اضافه کن؛ نرخ کلیک چند برابر میشه.</p>
+    </div>
+    <div class="tip-card">
+      <div class="ic">🔁</div>
+      <h4>فوروارد هوشمند</h4>
+      <p>با هماهنگی ادمین، پست رو تو کانال‌ها و گروه‌های برنامه‌نویسی فارسی فوروارد کن. اسپم نکن!</p>
+    </div>
+  </section>
+
+  <footer class="foot">ساخته‌شده با ❤️ برای جامعه دولوپرهای فارسی‌زبان · <b>AreadmeForge</b> ⚡</footer>
+</main>
+
+<div id="toast" role="status"></div>
+
+<script>
+(function(){
+"use strict";
+const $ = s => document.querySelector(s);
+
+const BANNER_URL = "https://image.qwenlm.ai/public_source/837014a4-3116-4593-b63a-3bf3b6d9cba8/11503aa0e-0239-4ca8-b1b5-866c08cedc00.png";
+
+const VARIANTS = {
+full: `🚀 AreadmeForge | سازنده README پروفایل گیت‌هاب
+
+تا حالا پروفایل‌های خفن گیت‌هاب رو دیدی؟ بنر متحرک، کارت آمار، مار مشارکت‌ها، افکت تایپینگ... 👀
+
+حالا خودت می‌تونی تو کمتر از ۲ دقیقه یکی بسازی! ⚡
+
+ ویژگی‌های AreadmeForge:
+✅ بدون نصب — فقط یک فایل HTML
+✅ پیش‌نمایش زنده دقیقاً مثل گیت‌هاب
+✅ ۷ ویجت: آمار، Streak، جام‌ها، مار، تایپینگ، بنر، شمارنده بازدید
+✅ آیکن آماده Flutter، Rust، Python و ده‌ها تکنولوژی
+✅ تم رنگی دلخواه
+✅ ۱۰۰٪ سمت مرورگر — هیچ داده‌ای جایی نمیره
+
+📦 نحوه استفاده:
+1️⃣ لینک دمو رو باز کن
+2️⃣ اطلاعاتت رو وارد کن و ویجت‌ها رو انتخاب کن
+3️⃣ دکمه Download رو بزن
+4️⃣ فایل README.md رو تو ریپوی هم‌نام یوزرنمت آپلود کن
+
+🔗 دمو: aghorbani84.github.io/AreadmeForge
+💻 سورس: github.com/aghorbani84/AreadmeForge
+
+⭐ یه استار یادت نره!
+
+#گیت‌هاب #برنامه_نویسی #دولوپر #README`,
+
+short: `⚡ پروفایل گیت‌هابت رو تو ۲ دقیقه حرفه‌ای کن!
+
+AreadmeForge — سازنده رایگان README پروفایل گیت‌هاب با پیش‌نمایش زنده، کارت آمار، مار مشارکت‌ها، جام‌ها و افکت تایپینگ. بدون نصب، بدون ثبت‌نام، کاملاً متن‌باز. 🚀
+
+ aghorbani84.github.io/AreadmeForge
+💻 github.com/aghorbani84/AreadmeForge
+
+#گیت‌هاب #برنامه_نویسی #ابزار`,
+
+story: `پروفایل گیت‌هاب، رزومه دوم توئه! 📄
+
+قبل از مصاحبه، خیلی از شرکت‌ها گیت‌هابت رو چک می‌کنن. پروفایلی که آمار، جام و مار مشارکت‌ها داره، یه پیام واضح داره: این آدم جدیه! 💪
+
+با AreadmeForge تو کمتر از ۲ دقیقه چنین پروفایلی می‌سازی — بدون حتی یک خط کد!
+
+✨ چرا AreadmeForge؟
+• پیش‌نمایش زنده دقیقاً مثل گیت‌هاب
+• ۷ ویجت آماده با یک کلیک
+• تم و رنگ دلخواه
+• رایگان و متن‌باز (MIT)
+• بدون نصب و ثبت‌نام
+
+🔗 aghorbani84.github.io/AreadmeForge
+💻 github.com/aghorbani84/AreadmeForge
+
+⭐ اگه به دردت خورد، یه استار بزن
+
+#گیت‌هاب #برنامه_نویس #رزومه #دولوپر`
+};
+
+const HASHTAGS = ["#گیت‌هاب","#برنامه_نویسی","#دولوپر","#README","#ابزار","#متن_باز","#Flutter","#Rust","#رزومه","#فریلنس"];
+
+const CAP_LIMIT = 1024;   // تلگرام: کپشن همراه با مدیا
+const MSG_LIMIT = 4096;  // تلگرام: پیام متنی خالی
+let limit = CAP_LIMIT;
+let currentVar = "full";
+
+/* ---------- helpers ---------- */
+function esc(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function linkify(text){
+  let h = esc(text);
+  // URLهای صریح با پروتکل
+  h = h.replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>');
+  // دامنه‌های معروف بدون پروتکل
+  h = h.replace(/(^|[\s>])((?:aghorbani84\.github\.io|github\.com|youtube\.com)[^\s<]*)/g,
+    '$1<a href="https://$2" target="_blank" rel="noopener">$2</a>');
+  return h;
+}
+function toast(msg){
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._h);
+  t._h = setTimeout(()=>t.classList.remove('show'),2300);
+}
+
+/* ---------- render ---------- */
+function updateCounter(){
+  const len = $('#postText').value.length;
+  const pct = Math.min(100, (len/limit)*100);
+  const over = len > limit;
+  const num = $('#countNum');
+  const bar = $('#countBar');
+  num.innerHTML = len.toLocaleString('fa-IR') + ' <small>/ ' + limit.toLocaleString('fa-IR') + '</small>';
+  num.classList.toggle('over', over);
+  bar.classList.toggle('over', over);
+  bar.querySelector('i').style.width = pct + '%';
+}
+function renderPreview(){
+  $('#tgCap').innerHTML = linkify($('#postText').value);
+  updateCounter();
+}
+
+/* ---------- variant tabs ---------- */
+function setVariant(key){
+  currentVar = key;
+  $('#postText').value = VARIANTS[key];
+  document.querySelectorAll('#varTabs .tab').forEach(t=>
+    t.classList.toggle('active', t.dataset.v === key));
+  renderPreview();
+}
+document.querySelectorAll('#varTabs .tab').forEach(t=>
+  t.addEventListener('click',()=>setVariant(t.dataset.v)));
+
+$('#postText').addEventListener('input',()=>{
+  VARIANTS[currentVar] = $('#postText').value; // ذخیره ویرایش
+  renderPreview();
+});
+
+/* ---------- hashtag chips ---------- */
+function buildChips(){
+  const el = $('#hashChips'); el.innerHTML = '';
+  HASHTAGS.forEach(tag=>{
+    const b = document.createElement('button');
+    b.type='button'; b.className='chip'; b.textContent=tag;
+    b.addEventListener('click',()=>{
+      const ta = $('#postText');
+      if(ta.value.includes(tag)){ toast('این هشتگ قبلاً داخل متن هست'); return; }
+      const sep = ta.value.trim() ? (ta.value.endsWith('\n') ? '' : '\n') : '';
+      ta.value = ta.value.trimEnd() + sep + (ta.value.trim() && !/\n\s*$/.test(ta.value) ? ' ' : '') + tag;
+      // تمیزکاری فاصله
+      ta.value = ta.value.replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n');
+      VARIANTS[currentVar] = ta.value;
+      renderPreview();
+      toast('هشتگ اضافه شد ✅');
+    });
+    el.appendChild(b);
+  });
+}
+
+/* ---------- copy ---------- */
+async function copyText(){
+  const txt = $('#postText').value;
+  try{ await navigator.clipboard.writeText(txt); }
+  catch(e){
+    const ta = document.createElement('textarea');
+    ta.value = txt; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(_){}
+    ta.remove();
+  }
+  toast('📋 متن پست کپی شد — حالا بچسبون تو تلگرام!');
+}
+$('#copyBtn').addEventListener('click',copyText);
+
+/* ---------- download banner ---------- */
+async function downloadBanner(){
+  const filename = 'areadmeforge-telegram-banner.png';
+  try{
+    const res = await fetch(BANNER_URL, {mode:'cors'});
+    if(!res.ok) throw new Error('fetch failed');
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),800);
+    toast('🖼 بنر دانلود شد');
+  }catch(e){
+    // fallback: باز کردن در تب جدید
+    window.open(BANNER_URL, '_blank');
+    toast('بنر در تب جدید باز شد — راست‌کلیک و Save کن');
+  }
+}
+$('#imgBtn').addEventListener('click',downloadBanner);
+
+/* ---------- init ---------- */
+$('#tgImg').src = BANNER_URL;
+buildChips();
+setVariant('full');
+})();
+</script>
+</body>
+</html>
